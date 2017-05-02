@@ -1,4 +1,5 @@
 import cards from 'cards';
+import uuid from 'uuid/v4'
 
 const deck = new cards.PokerDeck();
 const byId = {};
@@ -18,7 +19,10 @@ while (deck.deck.length > 0) {
   }
 
   allIds.push(cardId);
-}
+};
+
+const firstUserId = uuid();
+const firstTurnId = uuid();
 
 export default () => {
   // TODO: Initialize the deck of cards here
@@ -26,6 +30,25 @@ export default () => {
     cards: {
       byId,
       allIds
+    },
+    users: {
+      byId: {
+        [firstUserId]: {
+          name: 'Player 1',
+          type: 'human'
+        }
+      }
+    },
+    turns: {
+      byId: {
+        [firstTurnId]: {
+          cardOneId: null,
+          cardTwoId: null,
+          userId: firstUserId,
+          id: firstTurnId
+        }
+      },
+      allIds: [firstTurnId]
     }
   };
 }

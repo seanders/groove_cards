@@ -1,0 +1,27 @@
+.card--container {
+  width: 100px;
+  height: 175px;
+  border: 1px solid grey;
+  margin: 10px;
+  border-radius: 10px;
+  line-height: 175px;
+  font-size: 20px;
+  float: left;
+}
+
+.card--container:hover {
+  cursor: pointer;
+}
+
+.card--not-face-up {
+  background-color: #719CAA;
+}
+
+.card--mismatched {
+  border: 1px solid red;
+}
+
+.card--matched {
+  border: 1px solid green;
+}
+
