@@ -1,10 +1,9 @@
 .card--container {
   width: 100px;
   height: 175px;
-  border: 1px solid grey;
+  border: 3px solid grey;
   margin: 10px;
   border-radius: 10px;
-  line-height: 175px;
   font-size: 20px;
   float: left;
 }
@@ -18,10 +17,24 @@
 }
 
 .card--mismatched {
-  border: 1px solid red;
+  border: 3px solid red;
 }
 
 .card--matched {
-  border: 1px solid green;
+  border: 3px solid green;
+}
+
+.card--flex-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.card--flex-row {
+  font-size: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 

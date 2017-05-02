@@ -22,3 +22,13 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.col-9 {
+  float: left;
+  width: 75%;
+}
+
+.col-3 {
+  float: left;
+  width: 25%;
+}

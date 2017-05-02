@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Card from './../components/Card';
-import { getTurnById, getCardById } from './../selectors';
-import { actions as cardActions } from './../reducers/turns';
+import { getTurnById, getCardById, getAllUserIds } from './../selectors';
+import { actionCreators as turnActions } from './../reducers/turns';
 
 export class GameCard extends Component {
   render() {
@@ -25,11 +25,13 @@ const mapStateToProps = (state, { card, turn }) => {
   const { cardOneId, cardTwoId } = turn;
   const cardOne = getCardById(state, cardOneId);
   const cardTwo = getCardById(state, cardTwoId);
-  var cardIsFaceUp = cardOneId === card.id || cardTwoId === card.id;
+
+  const cardIsFaceUp = cardOneId === card.id || cardTwoId === card.id;
+  const matchExists = !!cardOne && !!cardTwo && cardOne.value === cardTwo.value;
 
   return {
     faceUp: cardIsFaceUp,
-    matched: (isTurnFinished(turn)) ? (cardOne.value === cardTwo.value) : null,
+    matched: isTurnFinished(turn) ? matchExists : null,
   }
 }
 
@@ -37,10 +39,9 @@ const mapDispatchToProps = (dispatch, { turn }) => {
   return {
     onClick: (cardId) => {
       if(isTurnFinished(turn)) {
-        // create new turn
-        console.log('turn is finished foo');
+        dispatch(turnActions.startNextTurn(turn))
       } else {
-        dispatch(cardActions.selectCard(cardId, turn.id));
+        dispatch(turnActions.selectCard(cardId, turn.id));
       }
     }
   }

@@ -1,5 +1,5 @@
 import cards from 'cards';
-import uuid from 'uuid/v4'
+import uuid from 'uuid/v4';
 
 const deck = new cards.PokerDeck();
 const byId = {};
@@ -15,6 +15,7 @@ while (deck.deck.length > 0) {
   byId[cardId] = {
     value: card.value,
     suit:  card.suit,
+    userId: null,
     id:    cardId
   }
 
@@ -35,9 +36,11 @@ export default () => {
       byId: {
         [firstUserId]: {
           name: 'Player 1',
-          type: 'human'
+          type: 'human',
+          id: firstUserId,
         }
-      }
+      },
+      allIds: [firstUserId]
     },
     turns: {
       byId: {
