@@ -1,6 +1,18 @@
 ## Groove Cards - Get your groove on.
 
 
+### Getting Started
+To install and run the game:
+```sh
+npm install
+npm run
+```
+
+To turn on the bot, simply add the url param `ai`.
+Like so:
+`localhost:3000?ai`
+
+
 ### Frontend data model
 
 ```javascript

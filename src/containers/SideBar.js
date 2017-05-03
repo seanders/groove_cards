@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getAllTurnIds, getCurrentTurn, getPairedCardsForCurrentUser, getUserById, getAllCards } from './../selectors';
-import Card from './../components/Card';
+import { getAllTurnIds, getPairedCardsForCurrentUser, getUserById, getAllCards, getCurrentUserId } from './../selectors';
 import './SideBar.css';
-import every from 'lodash/every';
+import isGameOver from './../services/isGameOver';
 
 export class SideBar extends Component {
   render() {
-    const { turnCount, pairedCards, winner } = this.props;
+    const { turnCount, pairedCards, currentUser, winner } = this.props;
     return (
       <div className='sidebar'>
         <p>Turn: { turnCount}</p>
-        <p></p>
+        <p>Current Player: {currentUser.name}</p>
         <p>Pairs:</p>
         <p className='sidebar--progress-section'>{ pairedCards.sort((card, nextCard) => card.value < nextCard.value).map(card => card.id) }</p>
         {
@@ -48,7 +47,8 @@ const mapStateToProps = (state) => {
   return {
     turnCount: turnIds.length,
     pairedCards: getPairedCardsForCurrentUser(state),
-    winner: every(allCards, card => card.userId !== null) ? getUserById(state, calculateWinnerId(allCards)) : null,
+    winner: isGameOver(allCards) ? getUserById(state, calculateWinnerId(allCards)) : null,
+    currentUser: getUserById(state, getCurrentUserId(state))
   }
 }
 

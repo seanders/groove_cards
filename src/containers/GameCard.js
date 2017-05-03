@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Card from './../components/Card';
-import { getTurnById, getCardById, getAllUserIds } from './../selectors';
+import { getCardById, getUserById } from './../selectors';
 import { actionCreators as turnActions } from './../reducers/turns';
 
 export class GameCard extends Component {
@@ -32,6 +32,7 @@ const mapStateToProps = (state, { card, turn }) => {
   return {
     faceUp: cardIsFaceUp,
     matched: isTurnFinished(turn) ? matchExists : null,
+    currentUser: getUserById(state, turn.userId),
   }
 }
 
@@ -47,4 +48,15 @@ const mapDispatchToProps = (dispatch, { turn }) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GameCard);
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+  return Object.assign({}, ownProps, stateProps, dispatchProps, {
+    onClick: (cardId) => {
+      // Ignore clicks that occur while the AI is playing.
+      if (stateProps.currentUser.type !== 'AI') {
+        return dispatchProps.onClick(cardId);
+      }
+    }
+  });
+}
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(GameCard);

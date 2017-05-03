@@ -1,7 +1,9 @@
 import { combineReducers } from 'redux';
-import { getTurnById, getAllUserIds, getCardById, getAllCards } from './../selectors';
+import { getTurnById, getAllTurns, getCurrentTurn, getAllUserIds, getCardById, getAllCards, getAllCardIds, getUserById, getCurrentUserId } from './../selectors';
 import uuid from 'uuid/v4';
 import some from 'lodash/some';
+import ai from '../services/ai';
+import isGameOver from '../services/isGameOver';
 
 // Actions
 const SELECT_CARD = 'groove_cards/turns/SELECT_CARD';
@@ -15,14 +17,35 @@ export const actions = {
 
 // Action Creators
 const selectCard = (cardId, turnId) => {
-  return {
-    type: SELECT_CARD,
-    cardId,
-    turnId
+  return (dispatch, getState) => {
+    const state = getState();
+    const userId = getCurrentUserId(state);
+
+    dispatch({
+      type: SELECT_CARD,
+      cardId,
+      turnId
+    });
+
+    if(getUserById(getState(), userId).type === 'AI') {
+      const turn = getTurnById(getState(), turnId);
+      if (turn.cardOneId !== null && turn.cardTwoId === null) {
+        const freshState = getState();
+        ai.chooseCard(
+          getAllTurns(freshState),
+          getCurrentTurn(freshState),
+          getAllCards(freshState),
+          getAllCardIds(freshState),
+          dispatch,
+        )
+      } else {
+        setTimeout(() => dispatch(startNextTurn(turn)), 500)
+      }
+    }
   }
 }
 
-const startNextTurn = (currentTurn, matched) => {
+const startNextTurn = (currentTurn) => {
   const currentUserId = currentTurn.userId;
 
   return (dispatch, getState) => {
@@ -34,7 +57,7 @@ const startNextTurn = (currentTurn, matched) => {
     const curretUserIndex = userIds.indexOf(currentUserId);
     let nextUserId;
 
-    if (matched) {
+    if (cardOne.value === cardTwo.value) {
       nextUserId = currentUserId;
     } else {
       nextUserId = userIds[curretUserIndex + 1] || userIds[0];
@@ -43,11 +66,11 @@ const startNextTurn = (currentTurn, matched) => {
     dispatch({
       type: RESOLVE_CURRENT_TURN,
       turn: currentTurn,
-      matched: cardOne.value == cardTwo.value,
+      matched: cardOne.value === cardTwo.value,
     });
 
     // Handle end game scenario
-    if (some(allCards, card => card.userId == null)) {
+    if (!isGameOver(getAllCards(getState()))) {
       dispatch({
         type: START_NEXT_TURN,
         turn: {
@@ -57,6 +80,17 @@ const startNextTurn = (currentTurn, matched) => {
           id: uuid(),
         }
       });
+
+      if(getUserById(state, nextUserId).type === 'AI') {
+        const freshState = getState();
+        ai.chooseCard(
+          getAllTurns(freshState),
+          getCurrentTurn(freshState),
+          getAllCards(freshState),
+          getAllCardIds(freshState),
+          dispatch,
+        );
+      }
     }
   }
 }

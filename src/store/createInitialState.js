@@ -23,11 +23,12 @@ while (deck.deck.length > 0) {
 };
 
 const firstUserId = uuid();
+const secondUserId = uuid();
 const firstTurnId = uuid();
 
 export default () => {
   // TODO: Initialize the deck of cards here
-  return {
+  const initalState = {
     cards: {
       byId,
       allIds
@@ -54,4 +55,16 @@ export default () => {
       allIds: [firstTurnId]
     }
   };
+
+  if (window.location.search.match(/ai/)) {
+    initalState.users.byId[secondUserId] = {
+      name: 'Hal',
+      type: 'AI',
+      id: secondUserId,
+    };
+
+    initalState.users.allIds.push(secondUserId);
+  }
+
+  return initalState;
 }
